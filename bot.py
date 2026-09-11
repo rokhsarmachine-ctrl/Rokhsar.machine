@@ -5,8 +5,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "سلام عزیزم، ثبت سفارش ماشین اینجاست 🌸
-پیام خود رو بنویسید تا برای مدیر ارسال شود")
+    bot.reply_to(message, ". سلام عزیزم، ثبت سفارش ماشین اینجاست 🌸 لطفا پیام بگذارید تا برای مدیر ارسال شود ")
 
 
 ADMIN_ID = 7122529232  # اینجا آیدی عددی خودت را بگذار
