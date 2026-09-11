@@ -32,7 +32,7 @@ def cnc_menu():
 def start(message):
     bot.send_message(
         message.chat.id,
-        "سلام! به ربات معرفی ماشین CNC خوش اومدی 🌸",
+         سلام! به ربات معرفی ماشین  CNC خوش اومدی رخسار ماشین 🌸",
         reply_markup=main_menu()
     )
 
