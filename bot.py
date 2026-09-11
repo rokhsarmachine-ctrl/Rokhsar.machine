@@ -32,7 +32,7 @@ def cnc_menu():
 def start(message):
     bot.send_message(
         message.chat.id,
-        "سلام به رخسار ماشین تولید کننده ی ماشین آلات cnc خوش اومدی 🌸",
+        "سلام به رخسار ماشین تولید کننده ی ماشین آلات cnc خوش اومدی ⚙️🔩🔧",
         reply_markup=main_menu()
     )
 
@@ -108,7 +108,7 @@ def menu_handler(message):
     elif message.text == "بازگشت":
         bot.send_message(
             message.chat.id,
-            "به منوی اصلی برگشتی 🌸",
+            "به منوی اصلی برگشتی ⚙️",
             reply_markup=main_menu()
         )
 
