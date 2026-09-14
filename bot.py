@@ -33,7 +33,7 @@ def device_menu():
 def start(message):
     bot.send_message(
         message.chat.id,
-        "سلام! به ربات گروه تولیدی رخسار ماشین خوش اومدی 🌸\n"
+        "سلام! به ربات گروه تولیدی رخسار ماشین خوش اومدی 🌹\n"
         "لطفاً از منوی زیر انتخاب کن:",
         reply_markup=main_menu()
     )
@@ -109,7 +109,7 @@ def handler(message):
             message.chat.id,
             "🏭 **گروه تولیدی رخسار ماشین**\n"
             "تولیدکننده انواع دستگاه‌های CNC، طراحی ماشین‌آلات صنعتی، ساخت سفارشی تجهیزات.\n"
-            "با بیش از ۱۵ سال تجربه در صنعت ماشین‌سازی."
+            "بزودی."
         )
 
     # --- شماره تماس ---
@@ -123,7 +123,7 @@ def handler(message):
     elif message.text == "بازگشت":
         bot.send_message(
             message.chat.id,
-            "به منوی اصلی برگشتی 🌸",
+            "به منوی اصلی برگشتی 🌹",
             reply_markup=main_menu()
         )
 
@@ -144,7 +144,7 @@ def save_order(message):
     else:
         bot.send_message(ADMIN_ID, f"سفارش دستگاه:\n{message.text}")
 
-    bot.send_message(message.chat.id, "سفارش شما ثبت شد و برای مدیر ارسال گردید 🌸")
+    bot.send_message(message.chat.id, "سفارش شما ثبت شد و برای مدیر ارسال گردید 🌹")
 
 # -------------------------
 # ذخیره سفارش طراحی
@@ -156,7 +156,7 @@ def save_design(message):
     else:
         bot.send_message(ADMIN_ID, f"سفارش طراحی:\n{message.text}")
 
-    bot.send_message(message.chat.id, "سفارش طراحی شما ثبت شد و برای مدیر ارسال شد 🌸")
+    bot.send_message(message.chat.id, "سفارش طراحی شما ثبت شد و برای مدیر ارسال شد 🌹")
 
 # -------------------------
 # اجرای ربات
