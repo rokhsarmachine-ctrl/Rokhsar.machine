@@ -4,6 +4,7 @@ from telebot import types
 
 TOKEN = "8390893863:AAEZFhkYG0l22pWGNr3rounwkUChtxneOPc"
 ADMIN_ID = 7122529232   # آیدی عددی مدیر ربات را اینجا بگذار
+
 bot = telebot.TeleBot(TOKEN)
 
 # -------------------------
@@ -11,7 +12,8 @@ bot = telebot.TeleBot(TOKEN)
 # -------------------------
 def main_menu():
     menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    menu.add("ثبت سفارش دستگاه", "ثبت سفارش طراحی ماشین‌آلات")
+    menu.add("ثبت سفارش دستگاه", "ثبت سفارش طراحی و ساخت ماشین‌آلات")
+    menu.add("ثبت سفارش طراحی قطعه", "ثبت سفارش طراحی و ساخت قطعه")
     menu.add("معرفی دستگاه‌های تولیدی")
     menu.add("درباره ما", "شماره تماس")
     return menu
@@ -22,7 +24,7 @@ def main_menu():
 def device_menu():
     menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
     menu.add("CNC فرز تخت", "CNC تراش")
-    menu.add("دستگاه منبت", "دستگاه خراطی")
+    menu.add("CNC تخت", "دستگاه منبت", "دستگاه خراطی")
     menu.add("بازگشت")
     return menu
 
@@ -33,8 +35,8 @@ def device_menu():
 def start(message):
     bot.send_message(
         message.chat.id,
-        "سلام! به ربات گروه تولیدی رخسار ماشین خوش اومدی 🌹\n"
-        "لطفاً از منوی زیر انتخاب کن:",
+        "سلام! به ربات گروه تولیدی رخسار ماشین خوش آمدید 🫡\n"
+        "لطفاً از منوی زیر انتخاب کنید:",
         reply_markup=main_menu()
     )
 
@@ -48,25 +50,43 @@ def handler(message):
     if message.text == "ثبت سفارش دستگاه":
         msg = bot.send_message(
             message.chat.id,
-            "لطفاً نوع دستگاه مورد نیاز، مشخصات و شماره تماس خود را ارسال کنید.\n"
-            "اگر عکس هم داری، ارسال کن تا مدیر بررسی کند."
+            "لطفاً نوع دستگاه، توضیحات کامل و شماره تماس را ارسال کنید.\n"
+            "در صورت نیاز عکس هم ارسال کنید."
         )
-        bot.register_next_step_handler(msg, save_order)
+        bot.register_next_step_handler(msg, save_order_device)
 
-    # --- ثبت سفارش طراحی ماشین‌آلات ---
-    elif message.text == "ثبت سفارش طراحی ماشین‌آلات":
+    # --- ثبت سفارش طراحی و ساخت ماشین‌آلات ---
+    elif message.text == "ثبت سفارش طراحی و ساخت ماشین‌آلات":
         msg = bot.send_message(
             message.chat.id,
-            "لطفاً توضیحات کامل پروژه طراحی، جنس، ابعاد و شماره تماس را ارسال کن.\n"
-            "در صورت نیاز عکس هم ارسال کن."
+            "لطفاً توضیحات پروژه، ابعاد، جنس، نیازهای فنی و شماره تماس را ارسال کنید.\n"
+            "در صورت نیاز عکس هم ارسال کنید."
         )
-        bot.register_next_step_handler(msg, save_design)
+        bot.register_next_step_handler(msg, save_design_machine)
+
+    # --- ثبت سفارش طراحی قطعه ---
+    elif message.text == "ثبت سفارش طراحی قطعه":
+        msg = bot.send_message(
+            message.chat.id,
+            "لطفاً مشخصات قطعه، ابعاد، جنس و شماره تماس را ارسال کنید.\n"
+            "اگر عکس یا نقشه دارید، ارسال کنید."
+        )
+        bot.register_next_step_handler(msg, save_design_part)
+
+    # --- ثبت سفارش طراحی و ساخت قطعه ---
+    elif message.text == "ثبت سفارش طراحی و ساخت قطعه":
+        msg = bot.send_message(
+            message.chat.id,
+            "لطفاً توضیحات کامل ساخت قطعه، جنس، ابعاد و شماره تماس را ارسال کنید.\n"
+            "در صورت نیاز عکس هم ارسال کنید."
+        )
+        bot.register_next_step_handler(msg, save_build_part)
 
     # --- معرفی دستگاه‌ها ---
     elif message.text == "معرفی دستگاه‌های تولیدی":
         bot.send_message(
             message.chat.id,
-            "کدوم دستگاه رو می‌خوای ببینی؟",
+            "کدام دستگاه را می‌خواهید ببینید؟",
             reply_markup=device_menu()
         )
 
@@ -85,6 +105,14 @@ def handler(message):
             message.chat.id,
             "🔧 **CNC تراش**\n"
             "مناسب برای تولید قطعات گرد، شفت‌ها، بوش‌ها و قطعات دقیق صنعتی."
+        )
+
+    # --- CNC تخت ---
+    elif message.text == "CNC تخت":
+        bot.send_message(
+            message.chat.id,
+            "⚙️ **CNC تخت**\n"
+            "مناسب برای برش و حکاکی صفحات بزرگ چوب، MDF و کامپوزیت."
         )
 
     # --- دستگاه منبت ---
@@ -108,7 +136,7 @@ def handler(message):
         bot.send_message(
             message.chat.id,
             "🏭 **گروه تولیدی رخسار ماشین**\n"
-            "تولیدکننده انواع دستگاه‌های CNC، طراحی ماشین‌آلات صنعتی، ساخت سفارشی تجهیزات.\n"
+            "تولیدکننده انواع دستگاه‌های CNC، طراحی ماشین‌آلات صنعتی و ساخت سفارشی تجهیزات.\n"
             "بزودی."
         )
 
@@ -123,40 +151,41 @@ def handler(message):
     elif message.text == "بازگشت":
         bot.send_message(
             message.chat.id,
-            "به منوی اصلی برگشتی 🌹",
+            "به منوی اصلی برگشتید 😊",
             reply_markup=main_menu()
         )
 
     else:
         bot.send_message(
             message.chat.id,
-            "لطفاً از منوی زیر انتخاب کن:",
+            "لطفاً از منوی زیر انتخاب کنید:",
             reply_markup=main_menu()
         )
 
 # -------------------------
-# ذخیره سفارش دستگاه
+# ذخیره سفارش‌ها
 # -------------------------
-def save_order(message):
+
+def forward_to_admin(prefix, message):
     if message.photo:
         file_id = message.photo[-1].file_id
-        bot.send_photo(ADMIN_ID, file_id, caption=f"سفارش دستگاه:\n{message.caption}")
+        bot.send_photo(ADMIN_ID, file_id, caption=f"{prefix}\n{message.caption}")
     else:
-        bot.send_message(ADMIN_ID, f"سفارش دستگاه:\n{message.text}")
+        bot.send_message(ADMIN_ID, f"{prefix}\n{message.text}")
 
     bot.send_message(message.chat.id, "سفارش شما ثبت شد و برای مدیر ارسال گردید 🌹")
 
-# -------------------------
-# ذخیره سفارش طراحی
-# -------------------------
-def save_design(message):
-    if message.photo:
-        file_id = message.photo[-1].file_id
-        bot.send_photo(ADMIN_ID, file_id, caption=f"سفارش طراحی:\n{message.caption}")
-    else:
-        bot.send_message(ADMIN_ID, f"سفارش طراحی:\n{message.text}")
+def save_order_device(message):
+    forward_to_admin("سفارش دستگاه:", message)
 
-    bot.send_message(message.chat.id, "سفارش طراحی شما ثبت شد و برای مدیر ارسال شد 🌹")
+def save_design_machine(message):
+    forward_to_admin("سفارش طراحی و ساخت ماشین‌آلات:", message)
+
+def save_design_part(message):
+    forward_to_admin("سفارش طراحی قطعه:", message)
+
+def save_build_part(message):
+    forward_to_admin("سفارش طراحی و ساخت قطعه:", message)
 
 # -------------------------
 # اجرای ربات
