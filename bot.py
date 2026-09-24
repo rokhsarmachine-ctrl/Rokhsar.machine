@@ -1,10 +1,11 @@
-import os
 import telebot
 from telebot import types
 
+# -------------------------
+# تنظیمات اصلی
+# -------------------------
 TOKEN = "8390893863:AAEZFhkYG0l22pWGNr3rounwkUChtxneOPc"
-ADMIN_ID = 7122529232   # آیدی عددی مدیر ربات را اینجا بگذار
-
+ADMIN_ID = 7122529232
 bot = telebot.TeleBot(TOKEN)
 
 # -------------------------
@@ -12,20 +13,9 @@ bot = telebot.TeleBot(TOKEN)
 # -------------------------
 def main_menu():
     menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    menu.add("ثبت سفارش دستگاه", "ثبت سفارش طراحی و ساخت ماشین‌آلات")
-    menu.add("ثبت سفارش طراحی قطعه", "ثبت سفارش طراحی و ساخت قطعه")
-    menu.add("معرفی دستگاه‌های تولیدی")
-    menu.add("درباره ما", "شماره تماس")
-    return menu
-
-# -------------------------
-# منوی معرفی دستگاه‌ها
-# -------------------------
-def device_menu():
-    menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    menu.add("CNC فرز تخت", "CNC تراش")
-    menu.add("CNC تخت", "دستگاه منبت", "دستگاه خراطی")
-    menu.add("بازگشت")
+    menu.add("🛠 ثبت سفارش دستگاه CNC", "🧩 ثبت سفارش طراحی و ساخت قطعه")
+    menu.add("⚙️ معرفی انواع دستگاه‌های تولیدی")
+    menu.add("📞 تماس با ما", "ℹ️ درباره ما")
     return menu
 
 # -------------------------
@@ -35,7 +25,8 @@ def device_menu():
 def start(message):
     bot.send_message(
         message.chat.id,
-        "سلام! به ربات گروه تولیدی رخسار ماشین خوش آمدید 🫡\n"
+        "👋 خوش آمدید به ربات گروه تولیدی رخسار ماشین\n"
+        "تولیدکننده ماشین‌آلات CNC (تراش، فرز، منبت، خراطی)\n\n"
         "لطفاً از منوی زیر انتخاب کنید:",
         reply_markup=main_menu()
     )
@@ -44,115 +35,52 @@ def start(message):
 # هندل پیام‌ها
 # -------------------------
 @bot.message_handler(func=lambda m: True)
-def handler(message):
+def menu_handler(message):
 
-    # --- ثبت سفارش دستگاه ---
-    if message.text == "ثبت سفارش دستگاه":
-        msg = bot.send_message(
+    # --- ثبت سفارش دستگاه CNC ---
+    if message.text == "🛠 ثبت سفارش دستگاه CNC":
+        bot.send_message(
             message.chat.id,
-            "لطفاً نوع دستگاه، توضیحات کامل و شماره تماس را ارسال کنید.\n"
-            "در صورت نیاز عکس هم ارسال کنید."
+            "لطفاً نوع دستگاه مورد نظر (تراش، فرز، منبت، خراطی) و مشخصات فنی را وارد کنید."
         )
-        bot.register_next_step_handler(msg, save_order_device)
-
-    # --- ثبت سفارش طراحی و ساخت ماشین‌آلات ---
-    elif message.text == "ثبت سفارش طراحی و ساخت ماشین‌آلات":
-        msg = bot.send_message(
-            message.chat.id,
-            "لطفاً توضیحات پروژه، ابعاد، جنس، نیازهای فنی و شماره تماس را ارسال کنید.\n"
-            "در صورت نیاز عکس هم ارسال کنید."
-        )
-        bot.register_next_step_handler(msg, save_design_machine)
-
-    # --- ثبت سفارش طراحی قطعه ---
-    elif message.text == "ثبت سفارش طراحی قطعه":
-        msg = bot.send_message(
-            message.chat.id,
-            "لطفاً مشخصات قطعه، ابعاد، جنس و شماره تماس را ارسال کنید.\n"
-            "اگر عکس یا نقشه دارید، ارسال کنید."
-        )
-        bot.register_next_step_handler(msg, save_design_part)
+        bot.send_message(ADMIN_ID, f"📩 سفارش دستگاه CNC از کاربر: {message.from_user.id}")
 
     # --- ثبت سفارش طراحی و ساخت قطعه ---
-    elif message.text == "ثبت سفارش طراحی و ساخت قطعه":
-        msg = bot.send_message(
-            message.chat.id,
-            "لطفاً توضیحات کامل ساخت قطعه، جنس، ابعاد و شماره تماس را ارسال کنید.\n"
-            "در صورت نیاز عکس هم ارسال کنید."
-        )
-        bot.register_next_step_handler(msg, save_build_part)
-
-    # --- معرفی دستگاه‌ها ---
-    elif message.text == "معرفی دستگاه‌های تولیدی":
+    elif message.text == "🧩 ثبت سفارش طراحی و ساخت قطعه":
         bot.send_message(
             message.chat.id,
-            "کدام دستگاه را می‌خواهید ببینید؟",
-            reply_markup=device_menu()
+            "لطفاً توضیحات قطعه، نقشه یا فایل سه‌بعدی خود را ارسال کنید.\n"
+            "📎 می‌توانید فایل CAD یا تصویر قطعه را هم بفرستید."
         )
+        bot.send_message(ADMIN_ID, f"📩 سفارش طراحی قطعه از کاربر: {message.from_user.id}")
 
-    # --- CNC فرز تخت ---
-    elif message.text == "CNC فرز تخت":
+    # --- معرفی انواع دستگاه‌های تولیدی ---
+    elif message.text == "⚙️ معرفی انواع دستگاه‌های تولیدی":
         bot.send_message(
             message.chat.id,
-            "🛠 **CNC فرز تخت**\n"
-            "مناسب برای برش، حکاکی، قالب‌سازی و تولید قطعات دقیق.\n"
-            "کاربرد در چوب، آلومینیوم، کامپوزیت و فلزات سبک."
+            "✅ دستگاه‌های تولیدی رخسار ماشین:\n\n"
+            "🔹 CNC تراش: ساخت قطعات گرد و رزوه‌دار\n"
+            "🔹 CNC فرز تخت: شیارزنی و سوراخ‌کاری دقیق\n"
+            "🔹 CNC منبت: حکاکی و طراحی روی چوب و MDF\n"
+            "🔹 CNC خراطی: تولید قطعات گرد چوبی\n"
+            "🔹 CNC سنگ‌بری: برش و حکاکی سنگ\n"
+            "🔹 CNC سفارشی: طراحی اختصاصی برای خطوط تولید\n"
         )
 
-    # --- CNC تراش ---
-    elif message.text == "CNC تراش":
+    # --- تماس با ما ---
+    elif message.text == "📞 تماس با ما":
         bot.send_message(
             message.chat.id,
-            "🔧 **CNC تراش**\n"
-            "مناسب برای تولید قطعات گرد، شفت‌ها، بوش‌ها و قطعات دقیق صنعتی."
-        )
-
-    # --- CNC تخت ---
-    elif message.text == "CNC تخت":
-        bot.send_message(
-            message.chat.id,
-            "⚙️ **CNC تخت**\n"
-            "مناسب برای برش و حکاکی صفحات بزرگ چوب، MDF و کامپوزیت."
-        )
-
-    # --- دستگاه منبت ---
-    elif message.text == "دستگاه منبت":
-        bot.send_message(
-            message.chat.id,
-            "🪵 **دستگاه منبت CNC**\n"
-            "برای تولید طرح‌های سه‌بعدی روی چوب، مبل‌سازی، دکوراسیون و هنرهای چوبی."
-        )
-
-    # --- دستگاه خراطی ---
-    elif message.text == "دستگاه خراطی":
-        bot.send_message(
-            message.chat.id,
-            "🪚 **دستگاه خراطی CNC**\n"
-            "مناسب برای تولید پایه‌میز، نرده، قطعات گرد چوبی و طرح‌های خاص."
+            "📞 شماره تماس: 09150447201\n"
+            "📍 آدرس: قزوین، گروه تولیدی رخسار ماشین"
         )
 
     # --- درباره ما ---
-    elif message.text == "درباره ما":
+    elif message.text == "ℹ️ درباره ما":
         bot.send_message(
             message.chat.id,
-            "🏭 **گروه تولیدی رخسار ماشین**\n"
-            "تولیدکننده انواع دستگاه‌های CNC، طراحی ماشین‌آلات صنعتی و ساخت سفارشی تجهیزات.\n"
-            "بزودی."
-        )
-
-    # --- شماره تماس ---
-    elif message.text == "شماره تماس":
-        bot.send_message(
-            message.chat.id,
-            "📞 شماره تماس پشتیبانی:\n**09150447201**"
-        )
-
-    # --- بازگشت ---
-    elif message.text == "بازگشت":
-        bot.send_message(
-            message.chat.id,
-            "به منوی اصلی برگشتید 😊",
-            reply_markup=main_menu()
+            "🔧 گروه تولیدی رخسار ماشین با تجربه در طراحی و ساخت ماشین‌آلات CNC، "
+            "آماده ارائه خدمات تخصصی در زمینه تراشکاری، فرزکاری و ساخت دستگاه‌های صنعتی است."
         )
 
     else:
@@ -161,31 +89,6 @@ def handler(message):
             "لطفاً از منوی زیر انتخاب کنید:",
             reply_markup=main_menu()
         )
-
-# -------------------------
-# ذخیره سفارش‌ها
-# -------------------------
-
-def forward_to_admin(prefix, message):
-    if message.photo:
-        file_id = message.photo[-1].file_id
-        bot.send_photo(ADMIN_ID, file_id, caption=f"{prefix}\n{message.caption}")
-    else:
-        bot.send_message(ADMIN_ID, f"{prefix}\n{message.text}")
-
-    bot.send_message(message.chat.id, "سفارش شما ثبت شد و برای مدیر ارسال گردید 🌹")
-
-def save_order_device(message):
-    forward_to_admin("سفارش دستگاه:", message)
-
-def save_design_machine(message):
-    forward_to_admin("سفارش طراحی و ساخت ماشین‌آلات:", message)
-
-def save_design_part(message):
-    forward_to_admin("سفارش طراحی قطعه:", message)
-
-def save_build_part(message):
-    forward_to_admin("سفارش طراحی و ساخت قطعه:", message)
 
 # -------------------------
 # اجرای ربات
